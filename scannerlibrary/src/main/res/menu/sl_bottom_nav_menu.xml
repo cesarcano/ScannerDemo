@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/op_camera"
+        android:icon="@drawable/sl_ic_camera"
+        android:iconTint="@color/sl_basic_gray"
+        android:title="@string/sl_camera"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/op_files"
+        android:icon="@drawable/sl_ic_foder"
+        android:iconTint="@color/sl_basic_gray"
+        android:title="@string/sl_archivos"
+        app:showAsAction="never" />
+</menu>

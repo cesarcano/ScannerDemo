@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="sl_basic_dimen_4dp">4dp</dimen>
+    <dimen name="sl_basic_dimen_8dp">8dp</dimen>
+    <dimen name="sl_basic_dimen_12dp">12dp</dimen>
+    <dimen name="sl_basic_dimen_16dp">16dp</dimen>
+    <dimen name="sl_polygonViewCircleWidth">32dp</dimen>
+    <dimen name="sl_polygonViewStrokeWidth">2dp</dimen>
+</resources>

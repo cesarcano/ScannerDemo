@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="sl_colorPrimary">#212121</color>
+    <color name="sl_colorPrimaryDark">#212121</color>
+    <color name="sl_colorAccent">#212121</color>
+
+    <color name="sl_white">#FFF</color>
+    <color name="sl_black">#000</color>
+    <color name="sl_basic_gray">#212121</color>
+    <color name="sl_transparent20">#CCFFFFFF</color>
+
+    <!-- / * * COLORES INSTITUCIONALES -->
+    <color name="sl_pantone526c">#652D89</color>
+    <color name="sl_pantone3268c">#00AE9E</color>
+    <color name="sl_pantone431c">#8A94A5</color>
+    <color name="sl_pantone158c">#F58025</color>
+    <color name="sl_pantone7470c">#006990</color>
+    <color name="sl_pantoneRubineRedC">#E20077</color>
+    <!-- COLORES INSTITUCIONALES * * / -->
+</resources>

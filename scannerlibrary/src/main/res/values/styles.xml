@@ -1,0 +1,9 @@
+<resources>
+
+    <style name="sl_LibTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/sl_colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/sl_colorPrimaryDark</item>
+        <item name="colorAccent">@color/sl_pantone431c</item>
+    </style>
+
+</resources>

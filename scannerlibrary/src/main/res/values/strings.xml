@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">ScannerLibrary</string>
+    <string name="sl_app_name">ScannerLibrary</string>
+    <string name="sl_error_environment_inizialized">Error al inicializar librería</string>
+    <string name="sl_init_lib_error">Lib instance is null</string>
+    <string name="sl_title_activity_scanner">ScannerActivity</string>
+    <string name="sl_cancelar">Cancelar</string>
+    <string name="sl_aceptar">Aceptar</string>
+
+    <string name="sl_camera">Cámara</string>
+    <string name="sl_archivos">Archivos</string>
 </resources>
