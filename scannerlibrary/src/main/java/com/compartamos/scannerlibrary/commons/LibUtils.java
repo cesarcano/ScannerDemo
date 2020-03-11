@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 
 import java.io.ByteArrayOutputStream;
@@ -15,6 +16,19 @@ import java.util.Calendar;
  * Used to global functions of the app.
  */
 public class LibUtils {
+
+    public interface ScannConstants {
+        int PICKFILE_REQUEST_CODE = 1;
+        int START_CAMERA_REQUEST_CODE = 2;
+        String OPEN_INTENT_PREFERENCE = "selectContent";
+        String IMAGE_BASE_PATH_EXTRA = "ImageBasePath";
+        int OPEN_CAMERA = 4;
+        int OPEN_MEDIA = 5;
+        String SCANNED_RESULT = "scannedResult";
+        String IMAGE_PATH = Environment
+                .getExternalStorageDirectory().getPath() + "/scanSample";
+        String SELECTED_BITMAP = "selectedBitmap";
+    }
 
     public static boolean isDarkColor(String colorAsString) {
         int color = Color.parseColor(colorAsString);

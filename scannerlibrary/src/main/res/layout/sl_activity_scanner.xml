@@ -1,32 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".app.ScannerActivity">
-
-    <include layout="@layout/sl_toolbar"
-        android:layout_alignParentTop="true"
+    <include
+        layout="@layout/sl_toolbar"
+        android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:layout_width="match_parent" />
+        android:layout_alignParentTop="true" />
 
     <FrameLayout
         android:id="@+id/fl_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:layout_marginBottom="?attr/actionBarSize" />
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_gravity="bottom"
-        android:background="@color/sl_white"
-        app:itemIconTint="@color/sl_basic_gray"
-        app:itemTextColor="@color/sl_basic_gray"
-        app:menu="@menu/sl_bottom_nav_menu" />
+        android:layout_marginTop="?attr/actionBarSize" />
 </RelativeLayout>

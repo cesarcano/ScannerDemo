@@ -8,4 +8,11 @@
 
     <string name="sl_camera">Cámara</string>
     <string name="sl_archivos">Archivos</string>
+    <string name="sl_apply_filter">Aplicando filtro...</string>
+    <string name="sl_loading">Cargando...</string>
+    <string name="sl_original">Original</string>
+    <string name="sl_auto_fix">Autoajustar</string>
+    <string name="sl_gray_scale">Escala de grises</string>
+    <string name="sl_b_n">B/N</string>
+    <string name="sl_scanning">Escaneando...</string>
 </resources>

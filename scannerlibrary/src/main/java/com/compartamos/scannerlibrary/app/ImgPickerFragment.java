@@ -1,110 +1,197 @@
 package com.compartamos.scannerlibrary.app;
 
-import android.content.Context;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.fragment.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 
+import com.compartamos.scannerlibrary.LibEnvironment;
 import com.compartamos.scannerlibrary.R;
+import com.compartamos.scannerlibrary.app.commons.BaseFragment;
+import com.compartamos.scannerlibrary.commons.LibUtils;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ImgPickerFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ImgPickerFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ImgPickerFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+public class ImgPickerFragment extends BaseFragment {
 
-    private OnFragmentInteractionListener mListener;
+    private View view;
+    private Uri fileUri;
+    private IScannCallback scanner;
 
-    public ImgPickerFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ImgPickerFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ImgPickerFragment newInstance(String param1, String param2) {
-        ImgPickerFragment fragment = new ImgPickerFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private BottomNavigationView bottom_navigation;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (!(activity instanceof IScannCallback)) {
+            throw new ClassCastException("Activity must implement IScanner");
         }
+        this.scanner = (IScannCallback) activity;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.sl_fragment_img_picker, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.sl_fragment_img_picker, null);
+        init();
+
+        bottom_navigation = view.findViewById(R.id.bottom_navigation);
+        bottom_navigation.setItemIconTintList(
+                ColorStateList.valueOf(Color.parseColor(LibEnvironment.getInstance().getColorTheme().getColorPrimary())));
+        bottom_navigation.setItemTextColor(
+                ColorStateList.valueOf(Color.parseColor(LibEnvironment.getInstance().getColorTheme().getColorPrimary())));
+        bottom_navigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
+        return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+    BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
+            new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    int itemId = item.getItemId();
+                    if (itemId == R.id.op_camera) {
+                        showToastMsg("Camera");
+                        openCamera();
+                        return true;
+                    } else if (itemId == R.id.op_files) {
+                        showToastMsg("Archivos");
+                        openMediaContent();
+                        return true;
+                    }
+                    return false;
+                }
+            };
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+    private void init() {
+        if (isIntentPreferenceSet()) {
+            handleIntentPreference();
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+            getActivity().finish();
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    private void clearTempImages() {
+        try {
+            File tempFolder = new File(LibUtils.ScannConstants.IMAGE_PATH);
+            for (File f : tempFolder.listFiles())
+                f.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    private void handleIntentPreference() {
+        int preference = getIntentPreference();
+        if (preference == LibUtils.ScannConstants.OPEN_CAMERA) {
+            openCamera();
+        } else if (preference == LibUtils.ScannConstants.OPEN_MEDIA) {
+            openMediaContent();
+        }
+    }
+
+    private boolean isIntentPreferenceSet() {
+        int preference = getArguments().getInt(LibUtils.ScannConstants.OPEN_INTENT_PREFERENCE, 0);
+        return preference != 0;
+    }
+
+    private int getIntentPreference() {
+        int preference = getArguments().getInt(LibUtils.ScannConstants.OPEN_INTENT_PREFERENCE, 0);
+        return preference;
+    }
+
+    public void openMediaContent() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        startActivityForResult(intent, LibUtils.ScannConstants.PICKFILE_REQUEST_CODE);
+    }
+
+    public void openCamera() {
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        File file = createImageFile();
+        boolean isDirectoryCreated = file.getParentFile().mkdirs();
+        Log.d("", "openCamera: isDirectoryCreated: " + isDirectoryCreated);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Uri tempFileUri = FileProvider.getUriForFile(getActivity().getApplicationContext(),
+                    "com.compartamos.scannerlibrary.provider", // As defined in Manifest
+                    file);
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempFileUri);
+        } else {
+            Uri tempFileUri = Uri.fromFile(file);
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempFileUri);
+        }
+        startActivityForResult(cameraIntent, LibUtils.ScannConstants.START_CAMERA_REQUEST_CODE);
+    }
+
+    private File createImageFile() {
+        clearTempImages();
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new
+                Date());
+        File file = new File(LibUtils.ScannConstants.IMAGE_PATH, "IMG_" + timeStamp +
+                ".jpg");
+        fileUri = Uri.fromFile(file);
+        return file;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("", "onActivityResult" + resultCode);
+        Bitmap bitmap = null;
+        if (resultCode == Activity.RESULT_OK) {
+            try {
+                switch (requestCode) {
+                    case LibUtils.ScannConstants.START_CAMERA_REQUEST_CODE:
+                        bitmap = getBitmap(fileUri);
+                        break;
+
+                    case LibUtils.ScannConstants.PICKFILE_REQUEST_CODE:
+                        bitmap = getBitmap(data.getData());
+                        break;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            getActivity().finish();
+        }
+        if (bitmap != null) {
+            postImagePick(bitmap);
+        }
+    }
+
+    protected void postImagePick(Bitmap bitmap) {
+        Uri uri = LibUtils.getUri(getActivity(), bitmap);
+        bitmap.recycle();
+        scanner.onBitmapSelect(uri);
+    }
+
+    private Bitmap getBitmap(Uri selectedimg) throws IOException {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 3;
+        AssetFileDescriptor fileDescriptor = null;
+        fileDescriptor =
+                getActivity().getContentResolver().openAssetFileDescriptor(selectedimg, "r");
+        Bitmap original
+                = BitmapFactory.decodeFileDescriptor(
+                fileDescriptor.getFileDescriptor(), null, options);
+        return original;
     }
 }

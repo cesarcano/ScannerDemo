@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/op_original"
+        android:icon="@drawable/sl_ic_image_outline"
+        android:iconTint="@color/sl_basic_gray"
+        android:title="@string/sl_original"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/op_auto_fix"
+        android:icon="@drawable/sl_ic_auto_fix"
+        android:iconTint="@color/sl_basic_gray"
+        android:title="@string/sl_auto_fix"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/op_gray_scale"
+        android:icon="@drawable/sl_ic_image_gray"
+        android:iconTint="@color/sl_basic_gray"
+        android:title="@string/sl_gray_scale"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/op_black_white"
+        android:icon="@drawable/sl_ic_filter_black_white"
+        android:iconTint="@color/sl_basic_gray"
+        android:title="@string/sl_b_n"
+        app:showAsAction="ifRoom" />
+</menu>
