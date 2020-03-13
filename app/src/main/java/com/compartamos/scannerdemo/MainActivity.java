@@ -9,8 +9,8 @@ import android.provider.MediaStore;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.compartamos.scannerlibrary.app.ScannerActivity;
-import com.compartamos.scannerlibrary.commons.LibUtils;
+import com.scanlibrary.ScanActivity;
+import com.scanlibrary.commons.LibUtils;
 
 import java.io.IOException;
 
@@ -24,9 +24,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent = new Intent(this, ScannerActivity.class);
-        intent.putExtra(ScannerActivity.LIB_COLOR, "#652D89");
-        startActivity(intent);
+        Intent intent = new Intent(this, ScanActivity.class);
+        //intent.putExtra(ScanActivity.LIB_COLOR, "#652D89");
+        startActivityForResult(intent, REQUEST_CODE);
     }
 
     @Override

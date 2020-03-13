@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/op_aceptar"
+        android:icon="@drawable/sl_ic_check"
+        android:iconTint="@color/sl_basic_gray"
+        android:title="@string/sl_aceptar"
+        app:showAsAction="ifRoom" />
+</menu>
