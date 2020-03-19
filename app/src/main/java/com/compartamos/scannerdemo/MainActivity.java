@@ -6,11 +6,11 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.scanlibrary.ScanActivity;
-import com.scanlibrary.commons.LibUtils;
 
 import java.io.IOException;
 
@@ -33,7 +33,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            Uri uri = data.getExtras().getParcelable(LibUtils.ScannConstants.SCANNED_RESULT);
+            Uri uri = data.getExtras().getParcelable(ScanActivity.ScannConstants.SCANNED_RESULT);
+            Log.i("MainActivity", "onActivityResult: " + uri.getPath());
             Bitmap bitmap = null;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);

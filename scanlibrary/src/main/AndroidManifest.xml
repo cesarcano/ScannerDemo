@@ -21,7 +21,7 @@
 
         <provider
             android:name=".commons.LibScannProvider"
-            android:authorities="com.scanlibrary.fileProviderScanner"
+            android:authorities="${applicationId}.com.scanlibrary.fileProviderScanner"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

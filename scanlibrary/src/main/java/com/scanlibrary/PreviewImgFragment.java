@@ -94,7 +94,7 @@ public class PreviewImgFragment extends BaseFragment {
                         bitmap = original;
                     }
                     Uri uri = LibUtils.getUri(getContext(), bitmap);
-                    data.putExtra(LibUtils.ScannConstants.SCANNED_RESULT, uri);
+                    data.putExtra(ScanActivity.ScannConstants.SCANNED_RESULT, uri);
                     getActivity().setResult(Activity.RESULT_OK, data);
                     original.recycle();
                     System.gc();
@@ -249,7 +249,7 @@ public class PreviewImgFragment extends BaseFragment {
     }
 
     private Uri getUri() {
-        Uri uri = getArguments().getParcelable(LibUtils.ScannConstants.SCANNED_RESULT);
+        Uri uri = getArguments().getParcelable(ScanActivity.ScannConstants.SCANNED_RESULT);
         return uri;
     }
 

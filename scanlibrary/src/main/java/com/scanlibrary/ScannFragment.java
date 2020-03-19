@@ -93,7 +93,7 @@ public class ScannFragment extends BaseFragment {
     }
 
     private Uri getUri() {
-        Uri uri = getArguments().getParcelable(LibUtils.ScannConstants.SELECTED_BITMAP);
+        Uri uri = getArguments().getParcelable(ScanActivity.ScannConstants.SELECTED_BITMAP);
         return uri;
     }
 

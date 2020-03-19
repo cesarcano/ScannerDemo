@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
@@ -46,6 +47,18 @@ import java.util.Date;
  */
 
 public class ScanActivity extends BaseActivity implements IScannCallback, ComponentCallbacks2 {
+    public interface ScannConstants {
+        int PICKFILE_REQUEST_CODE = 1;
+        int START_CAMERA_REQUEST_CODE = 2;
+        String OPEN_INTENT_PREFERENCE = "selectContent";
+        String IMAGE_BASE_PATH_EXTRA = "ImageBasePath";
+        int OPEN_CAMERA = 4;
+        int OPEN_MEDIA = 5;
+        String SCANNED_RESULT = "scannedResult";
+        String IMAGE_PATH = Environment
+                .getExternalStorageDirectory().getPath() + "/scanSample";
+        String SELECTED_BITMAP = "selectedBitmap";
+    }
 
     private final String TAG = getClass().getSimpleName();
 
@@ -152,7 +165,7 @@ public class ScanActivity extends BaseActivity implements IScannCallback, Compon
             getSupportFragmentManager().beginTransaction().remove(currentFragment).commit();
         currentFragment = new ScannFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelable(LibUtils.ScannConstants.SELECTED_BITMAP, uri);
+        bundle.putParcelable(ScannConstants.SELECTED_BITMAP, uri);
         currentFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().
                 add(R.id.fl_fragment_container, currentFragment, currentFragment.getClass().getName()).
@@ -165,7 +178,7 @@ public class ScanActivity extends BaseActivity implements IScannCallback, Compon
             getSupportFragmentManager().beginTransaction().remove(currentFragment).commit();
         currentFragment = new PreviewImgFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelable(LibUtils.ScannConstants.SCANNED_RESULT, uri);
+        bundle.putParcelable(ScannConstants.SCANNED_RESULT, uri);
         currentFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().
                 add(R.id.fl_fragment_container, currentFragment, currentFragment.getClass().getName()).
@@ -235,7 +248,7 @@ public class ScanActivity extends BaseActivity implements IScannCallback, Compon
 
     private void clearTempImages() {
         try {
-            File tempFolder = new File(LibUtils.ScannConstants.IMAGE_PATH);
+            File tempFolder = new File(ScannConstants.IMAGE_PATH);
             for (File f : tempFolder.listFiles())
                 f.delete();
         } catch (Exception e) {
@@ -247,7 +260,7 @@ public class ScanActivity extends BaseActivity implements IScannCallback, Compon
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("image/*");
-        startActivityForResult(intent, LibUtils.ScannConstants.PICKFILE_REQUEST_CODE);
+        startActivityForResult(intent, ScannConstants.PICKFILE_REQUEST_CODE);
     }
 
     public void openCamera() {
@@ -256,22 +269,35 @@ public class ScanActivity extends BaseActivity implements IScannCallback, Compon
         boolean isDirectoryCreated = file.getParentFile().mkdirs();
         Log.d("", "openCamera: isDirectoryCreated: " + isDirectoryCreated);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            Uri tempFileUri = FileProvider.getUriForFile(this,
-                    "com.scanlibrary.fileProviderScanner", // As defined in Manifest
-                    file);
-            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempFileUri);
+            try {
+                Uri tempFileUri = FileProvider.getUriForFile(getApplicationContext(),
+                        BuildConfig.APPLICATION_ID + ".com.scanlibrary.fileProviderScanner", // As defined in Manifest
+                        file);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempFileUri);
+            } catch (Exception e) {
+                e.printStackTrace();
+                try {
+                    Uri tempFileUri = FileProvider.getUriForFile(getApplicationContext(),
+                            getApplication().getPackageName() + ".com.scanlibrary.fileProviderScanner", // As defined in Manifest
+                            file);
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempFileUri);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
         } else {
             Uri tempFileUri = Uri.fromFile(file);
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempFileUri);
         }
-        startActivityForResult(cameraIntent, LibUtils.ScannConstants.START_CAMERA_REQUEST_CODE);
+        startActivityForResult(cameraIntent, ScannConstants.START_CAMERA_REQUEST_CODE);
     }
 
     private File createImageFile() {
         clearTempImages();
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new
                 Date());
-        File file = new File(LibUtils.ScannConstants.IMAGE_PATH, "IMG_" + timeStamp +
+        File file = new File(ScannConstants.IMAGE_PATH, "IMG_" + timeStamp +
                 ".jpg");
         fileUri = Uri.fromFile(file);
         return file;
@@ -285,11 +311,11 @@ public class ScanActivity extends BaseActivity implements IScannCallback, Compon
         if (resultCode == Activity.RESULT_OK) {
             try {
                 switch (requestCode) {
-                    case LibUtils.ScannConstants.START_CAMERA_REQUEST_CODE:
+                    case ScannConstants.START_CAMERA_REQUEST_CODE:
                         bitmap = getBitmap(fileUri);
                         break;
 
-                    case LibUtils.ScannConstants.PICKFILE_REQUEST_CODE:
+                    case ScannConstants.PICKFILE_REQUEST_CODE:
                         bitmap = getBitmap(data.getData());
                         break;
                 }
