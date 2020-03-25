@@ -22,6 +22,7 @@ import androidx.core.content.FileProvider;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.scanlibrary.commons.BaseFragment;
+import com.scanlibrary.commons.LibScannProvider;
 import com.scanlibrary.commons.LibUtils;
 
 import java.io.File;
@@ -127,20 +128,13 @@ public class ImgPickerFragment extends BaseFragment {
         Log.d("", "openCamera: isDirectoryCreated: " + isDirectoryCreated);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             try {
-                Uri tempFileUri = FileProvider.getUriForFile(getActivity().getApplicationContext(),
-                        BuildConfig.APPLICATION_ID + ".com.scanlibrary.fileProviderScanner", // As defined in Manifest
+                Uri tempFileUri = LibScannProvider.getUriForFile(getActivity(),
+                        LibEnvironment.getInstance().getHostId() + ".com.scanlibrary.fileProviderScanner", // As defined in Manifest
                         file);
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempFileUri);
+
             } catch (Exception e) {
                 e.printStackTrace();
-                try {
-                    Uri tempFileUri = FileProvider.getUriForFile(getActivity().getApplicationContext(),
-                            getActivity().getApplication().getPackageName() + ".com.scanlibrary.fileProviderScanner", // As defined in Manifest
-                            file);
-                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempFileUri);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
             }
         } else {
             Uri tempFileUri = Uri.fromFile(file);

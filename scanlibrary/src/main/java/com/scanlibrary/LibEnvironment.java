@@ -8,6 +8,7 @@ import com.scanlibrary.commons.LibUtils;
  */
 public class LibEnvironment {
     private ColorTheme colorTheme;
+    private String hostId;
     private static LibEnvironment _instance;
 
     public static void initialize(LibEnvironment libEnvironment) {
@@ -27,6 +28,14 @@ public class LibEnvironment {
 
     public void setColorTheme(ColorTheme colorTheme) {
         this.colorTheme = colorTheme;
+    }
+
+    public String getHostId() {
+        return hostId;
+    }
+
+    public void setHostId(String hostId) {
+        this.hostId = hostId;
     }
 
     public static class ColorTheme {

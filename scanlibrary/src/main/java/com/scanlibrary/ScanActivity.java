@@ -22,16 +22,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.core.widget.ImageViewCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.scanlibrary.commons.BaseActivity;
+import com.scanlibrary.commons.LibScannProvider;
 import com.scanlibrary.commons.LibUtils;
 import com.scanlibrary.dialogs.AlertDialog;
 
@@ -48,6 +47,7 @@ import java.util.Date;
 
 public class ScanActivity extends BaseActivity implements IScannCallback, ComponentCallbacks2 {
     public interface ScannConstants {
+        String HOST_PACKAGE = "host_package";
         int PICKFILE_REQUEST_CODE = 1;
         int START_CAMERA_REQUEST_CODE = 2;
         String OPEN_INTENT_PREFERENCE = "selectContent";
@@ -143,18 +143,16 @@ public class ScanActivity extends BaseActivity implements IScannCallback, Compon
         });
     }
 
-    private void initLibEnvironment(@Nullable Bundle environment) {
+    private void initLibEnvironment(@NonNull Bundle environment) {
         LibEnvironment libEnvironment = new LibEnvironment();
         LibEnvironment.ColorTheme mColorTheme = new LibEnvironment.ColorTheme();
         String color = "#FFFFFF";
-        if (environment != null) {
-            if (environment.containsKey(LIB_COLOR))
-                color = environment.getString(LIB_COLOR, "#FFFFFF").length() == 7 ?
-                        environment.getString(LIB_COLOR) : color;
-        }
+        if (environment.containsKey(LIB_COLOR))
+            color = environment.getString(LIB_COLOR, "#FFFFFF").length() == 7 ?
+                    environment.getString(LIB_COLOR) : color;
         mColorTheme.setColorPrimary(color);
         mColorTheme.setColorAccent(color);
-
+        libEnvironment.setHostId(environment.getString(ScannConstants.HOST_PACKAGE));
         libEnvironment.setColorTheme(mColorTheme);
         LibEnvironment.initialize(libEnvironment);
     }
@@ -270,20 +268,14 @@ public class ScanActivity extends BaseActivity implements IScannCallback, Compon
         Log.d("", "openCamera: isDirectoryCreated: " + isDirectoryCreated);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             try {
-                Uri tempFileUri = FileProvider.getUriForFile(getApplicationContext(),
-                        BuildConfig.APPLICATION_ID + ".com.scanlibrary.fileProviderScanner", // As defined in Manifest
+                Uri tempFileUri = LibScannProvider.getUriForFile(getApplicationContext(),
+                        LibEnvironment.getInstance().getHostId() + ".com.scanlibrary.fileProviderScanner", // As defined in Manifest
                         file);
+                Log.i(TAG, "openCamera: URI" + tempFileUri.toString());
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempFileUri);
+
             } catch (Exception e) {
                 e.printStackTrace();
-                try {
-                    Uri tempFileUri = FileProvider.getUriForFile(getApplicationContext(),
-                            getApplication().getPackageName() + ".com.scanlibrary.fileProviderScanner", // As defined in Manifest
-                            file);
-                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempFileUri);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
             }
 
         } else {

@@ -25,7 +25,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Intent intent = new Intent(this, ScanActivity.class);
-        //intent.putExtra(ScanActivity.LIB_COLOR, "#652D89");
+        intent.putExtra(ScanActivity.LIB_COLOR, "#652D89");
+        intent.putExtra(ScanActivity.ScannConstants.HOST_PACKAGE, "com.compartamos.scannerdemo");
         startActivityForResult(intent, REQUEST_CODE);
     }
 
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             Uri uri = data.getExtras().getParcelable(ScanActivity.ScannConstants.SCANNED_RESULT);
-            Log.i("MainActivity", "onActivityResult: " + uri.getPath());
+            Log.i("MainActivity", "onActivityResult: " + uri.toString());
             Bitmap bitmap = null;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
